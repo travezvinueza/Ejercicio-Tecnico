@@ -41,7 +41,7 @@ export class ArticuloComponent implements OnInit {
       codigo: [''],
       nombre: [''],
       precioUnitario: [''],
-      ordenId: [''] 
+      ordenId: ['']
     });
   }
 
@@ -74,7 +74,7 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  
+
   editArticulo(id: number) {
     this.articuloService.obtenerArticuloPorId(id).subscribe({
       next: (articulo: Articulo) => {
@@ -101,30 +101,28 @@ export class ArticuloComponent implements OnInit {
       next: (nuevoArticulo) => {
         this.articulos.push(nuevoArticulo);
         this.msgService.add({ severity: 'success', summary: 'Éxito', detail: 'Artículo creado exitosamente.' });
-        this.articuloDetalle.reset(); 
-        this.getAllArticulos(); 
+        this.articuloDetalle.reset();
+        this.getAllArticulos();
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al crear el artículo", error);
         this.msgService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el artículo.' });
       }
     });
-}
-
+  }
 
   actualizarArticulo() {
     const articulo: Articulo = this.articuloDetalle.value;
-    const ordenId = this.articuloDetalle.value.ordenId; 
 
-    this.articuloService.actualizarArticulo(articulo, ordenId).subscribe({
+    this.articuloService.actualizarArticulo(articulo).subscribe({
       next: (articuloActualizado) => {
         const index = this.articulos.findIndex(a => a.id === articuloActualizado.id);
         if (index !== -1) {
           this.articulos[index] = articuloActualizado;
         }
         this.msgService.add({ severity: 'success', summary: 'Éxito', detail: 'Artículo actualizado exitosamente.' });
-        this.articuloDetalle.reset(); 
-        this.getAllArticulos(); 
+        this.articuloDetalle.reset();
+        this.getAllArticulos();
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al actualizar el artículo", error);

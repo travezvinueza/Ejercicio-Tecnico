@@ -23,8 +23,8 @@ export class ArticuloService {
     return this.http.post<Articulo>(`${this.articleApi}/crear-articulo`, articulo);
   }
 
-  actualizarArticulo(articulo: Articulo, ordenId: number): Observable<Articulo> {
-    return this.http.put<Articulo>(`${this.articleApi}/actualizar-articulo/${ordenId}`, articulo)
+  actualizarArticulo(articulo: Articulo): Observable<Articulo> {
+    return this.http.put<Articulo>(`${this.articleApi}/actualizar-articulo`, articulo)
   }
 
   obtenerArticuloPorId(id: number): Observable<Articulo> {
