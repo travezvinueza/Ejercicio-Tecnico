@@ -1,7 +1,7 @@
 
 # Arquitectura Cliente Servidor
 
-Proyecto realizado bajo mvc con arquitetcura cliente servidor Este proyecto está desarrollado en Java utilizando Spring
+Este proyecto está desarrollado utilizando una arquitectura cliente-servidor basada en el patrón MVC (Modelo-Vista-Controlador), con el backend implementado en Java utilizando Spring Boot y el frontend en Angular.
 
 ## Tecnologías Utilizadas
 
@@ -9,7 +9,7 @@ Proyecto realizado bajo mvc con arquitetcura cliente servidor Este proyecto est�
 - Flyway: Para la creacion de tablas y carga de datos iniciales
 - PostgreSQL: Bases de datos relacionales para el almacenamiento de datos.
 - ModelMapper: Para mapear objetos de un modelo a otro.
-
+- Angular: Framework frontend utilizado para la creación de la interfaz gráfica de usuario.
 
 # Configuración
 
@@ -18,10 +18,16 @@ Dentro del archivo: /resources/.. se encuentran el script para creacion de tabla
 
 El proyecto tiene swagger para la documentacion 
 
-#### Para ingresar apuntar a la siguiente ruta
+#### Ruta para acceder a Swagger del servicio 
 
-```http
+```
   http://localhost:8080/api/swagger-ui/index.html#/
+```
+
+#### Ruta para acceder al frontend (Angular):
+
+```
+  http://localhost:4200/
 ```
 
  
