@@ -45,10 +45,13 @@ public class OrdenServiceImpl implements OrdenService {
                 Articulo articulo = articuloRepository.findById(articuloDto.getId())
                         .orElseThrow(() -> new ArticuloNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
 
+
+                articulo.setOrden(orden);
                 articulos.add(articulo);
             }
             orden.setArticulos(articulos);
         }
+
 
         Orden nuevaOrden = ordenRepository.save(orden);
         return modelMapper.map(nuevaOrden, OrdenDto.class);
