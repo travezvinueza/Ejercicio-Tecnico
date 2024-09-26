@@ -1,0 +1,27 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark " style="background-color: rgb(238, 2, 112);" >
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" style="margin-left: 20px; margin-right: 20px;">
+                <img src="./assets/angular.jpg" class="me-2" style="width: 50px; height: 50px; border-radius: 50%;" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" (click)="toggleCollapsed()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" [ngClass]="{'collapse': collapsed}">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/home" routerLinkActive="active">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/orden" routerLinkActive="active">Ordenes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/articulo" routerLinkActive="active">Articulos</a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

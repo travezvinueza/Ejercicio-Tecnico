@@ -1,0 +1,148 @@
+<div class="my-3">
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#agregarModalOrden">
+        <i class="pi pi-plus"></i> Agregar Orden
+    </button>
+</div>
+
+<div class="table-responsive-sm">
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-info">
+                <th>ID</th>
+                <th>Codigo</th>
+                <th>Fecha</th>
+                <th>Articulo</th>
+                <th class="text-center">Opciones</th>
+            </tr>
+        </thead> 
+        <tbody>
+            <tr *ngFor="let order of ordenes">
+                <td>{{ order.id }}</td>
+                <td>{{ order.codigo }}</td>
+                <td>{{ order.fecha }}</td>
+                <td>
+                    <ul>
+                        <li *ngFor="let articulo of order.articulos">
+                            {{ articulo.codigo }} - {{ articulo.nombre }} - {{ articulo.precioUnitario }}
+                        </li>
+                    </ul>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
+                        data-bs-target="#editarModalOrden" (click)="order.id && editOrden(order.id)">
+                        Editar
+                    </button>
+                    <button class="btn btn-danger btn-sm me-1" (click)="showConfirmation(order)">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Mensaje de confirmacion Toas -->
+<p-toast position="top-center" key="confirm" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <strong>
+                    <h4 class="text-danger">{{ message.summary }}</h4>
+                </strong>
+                <p class="text-black">{{ message.detail }}</p>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-danger btn-sm me-2" (click)="confirmDelete()">
+                    <i class="fa fa-trash"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="msgService.clear('confirm')">
+                    <i class="fa fa-cancel"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="modal fade" id="agregarModalOrden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog draggable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-center">
+                <h4 class="modal-title w-100 text-white" id="exampleModalLabel">Agregar Orden</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form [formGroup]="ordenDetalle">
+                    <input type="hidden" formControlName="id" class="form-control" id="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <select formControlName="clienteId" class="form-select" id="clienteId" required>
+                            <option value="" disabled selected>Seleccione un cliente</option>
+                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option> 
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Artículo</label>
+                        <select formControlName="articulo" class="form-select" required>
+                            <option value="" disabled selected>Seleccione un artículo</option>
+                            <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
+                        </select>
+                    </div>>
+                    
+                    <br>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
+                                class="fa fa-cancel"></i>Cancelar</button>
+                        <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
+                            (click)="addOrden()"><i class="fa fa-save"></i>Agregar </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editarModalOrden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog draggable">
+        <div class="modal-content">
+            <div class="modal-header text-center bg-info">
+                <h4 class="modal-title w-100 text-black" id="exampleModalLabel">Editar Orden</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="ordenDetalle">
+
+                    <input type="hidden" formControlName="id" class="form-control" id="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Cliente</label>
+                        <select formControlName="clienteId" class="form-select" id="clienteId" required>
+                            <option value="" disabled selected>Seleccione un cliente</option> 
+                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option> 
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Articulo</label>
+                        <select formControlName="articulo.id" class="form-select" id="articulo.id" required>
+                            <option value="" disabled selected>Seleccione un articulo</option>
+                            <option *ngFor="let articulo of articulos" [ngValue]="articulo.id">{{ articulo.nombre }}</option>
+                        </select>
+                    </div>
+                        
+                    <br>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
+                                class="fa fa-cancel"></span>Cerrar</button>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
+                            (click)="actualizarOrden()"><span class="pi pi-save"></span> Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

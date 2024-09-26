@@ -1,0 +1,136 @@
+<div class="my-3">
+    <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#agregarModalArticulo">
+        <i class="pi pi-plus"></i> Agregar Articulo
+    </button>
+</div>
+
+<div class="table-responsive-sm">
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-info">
+                <th>Id</th>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Precio Unitario</th>
+                <th class="text-center">Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let articulo of articulos">
+                <td>{{articulo.id}}</td>
+                <td>{{articulo.codigo}}</td>
+                <td>{{articulo.nombre}}</td>
+                <td>{{articulo.precioUnitario}}</td>
+            
+                <td class="text-center">
+                    <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
+                        data-bs-target="#editarModalArticulo" (click)="articulo.id && editArticulo(articulo.id)">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="showConfirmation(articulo)">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Mensaje de confirmacion Toas -->
+<p-toast position="top-center" key="confirm" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-column" style="flex: 1">
+            <div class="text-center">
+                <strong>
+                    <h4 class="text-danger">{{ message.summary }}</h4>
+                </strong>
+                <p class="text-black">{{ message.detail }}</p>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-danger btn-sm me-2" (click)="confirmDelete()">
+                    <i class="fa fa-trash"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="msgService.clear('confirm')">
+                    <i class="fa fa-cancel"></i> Cancelar
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</p-toast>
+
+
+<div class="modal fade" id="agregarModalArticulo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog draggable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-center">
+                <h4 class="modal-title w-100 text-white" id="exampleModalLabel">Agregar Articulo</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form [formGroup]="articuloDetalle">
+                    <input type="hidden" formControlName="id" class="form-control" id="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" formControlName="nombre" class="form-control" id="nombre" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Precio Unitario</label>
+                        <input type="text" formControlName="precioUnitario" class="form-control" id="precioUnitario" required>
+                    </div>
+                        
+                    <br>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
+                                class="fa fa-cancel"></i>Cancelar</button>
+                        <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
+                            (click)="crearArticulo()"><i class="fa fa-save"></i>Agregar </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="editarModalArticulo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog draggable">
+        <div class="modal-content">
+            <div class="modal-header text-center bg-info">
+                <h4 class="modal-title w-100 text-black" id="exampleModalLabel">Editar Articulo</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="articuloDetalle">
+                    <input type="hidden" formControlName="id" class="form-control" id="id">
+
+                    <!-- <div class="mb-3">
+                        <label class="form-label">Código</label>
+                        <input type="text" formControlName="codigo" class="form-control" id="codigo" required>
+                    </div> -->
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" formControlName="nombre" class="form-control" id="nombre" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Precio Unitario</label>
+                        <input type="text" formControlName="precioUnitario" class="form-control" id="precioUnitario" required>
+                    </div>
+
+
+                    <br>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
+                                class="fa fa-cancel"></span>Cerrar</button>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
+                            (click)="actualizarArticulo()"><span class="pi pi-save"></span> Actualizar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
