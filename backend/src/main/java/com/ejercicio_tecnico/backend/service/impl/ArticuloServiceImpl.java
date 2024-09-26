@@ -19,7 +19,6 @@ import java.util.List;
 public class ArticuloServiceImpl implements ArticuloService {
 
     private final ArticuloRepository articuloRepository;
-    private final OrdenRepository ordenRepository;
     private final ModelMapper modelMapper;
 
     @Override

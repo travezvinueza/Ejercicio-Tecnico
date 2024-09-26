@@ -20,6 +20,6 @@ CREATE TABLE articulos (
     codigo VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     precio_unitario DECIMAL(10, 2) NOT NULL,
-    orden_id BIGINT NOT NULL,
+    orden_id BIGINT,
     CONSTRAINT fk_orden FOREIGN KEY (orden_id) REFERENCES ordenes(id) ON DELETE CASCADE
 );

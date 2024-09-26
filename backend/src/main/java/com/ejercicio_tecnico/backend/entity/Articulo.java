@@ -26,6 +26,6 @@ public class Articulo {
     private BigDecimal precioUnitario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orden_id", nullable = false)
+    @JoinColumn(name = "orden_id")
     private Orden orden;
 }
