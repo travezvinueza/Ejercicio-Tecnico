@@ -9,15 +9,14 @@ INSERT INTO ordenes (codigo, fecha, cliente_id) VALUES ('ORDEN-000002', '2024-09
 INSERT INTO ordenes (codigo, fecha, cliente_id) VALUES ('ORDEN-000003', '2024-09-24', 2);
 INSERT INTO ordenes (codigo, fecha, cliente_id) VALUES ('ORDEN-000004', '2024-09-25', 3);
 
--- Insertar artículos
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000001', 'Audifonos', 12.00, 1);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000002', 'Teclado', 26.50, 1);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000002', 'Teclado', 26.50, 2);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000005', 'Mouse', 22.50, 2);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000004', 'Flash', 15.75, 2);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000003', 'Laptop PH', 900.00, 2);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000004', 'Flash', 15.75, 3);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000005', 'Mouse', 22.50, 3);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000006', 'Parlantes', 30.00, 3);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000001', 'Audifonos', 12.00, 4);
-INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000002', 'Teclado', 26.50, 4);
+-- Insertar artículos (nombres únicos)
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000001', 'Audífonos', 12.00, 1);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000002', 'Teclado mecánico', 26.50, 1);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000003', 'Ratón óptico', 22.50, 2);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000004', 'Pendrive 32GB', 15.75, 2);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000005', 'Laptop HP', 900.00, 2);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000006', 'Cargador portátil', 25.00, 3);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000007', 'Mochila para laptop', 45.00, 3);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000008', 'Webcam HD', 35.00, 3);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000009', 'Auriculares inalámbricos', 50.00, 4);
+INSERT INTO articulos (codigo, nombre, precio_unitario, orden_id) VALUES ('ARTICULO-000010', 'Teclado gaming', 30.00, 4);
