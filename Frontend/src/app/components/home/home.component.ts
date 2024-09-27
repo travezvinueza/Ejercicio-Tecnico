@@ -26,7 +26,6 @@ export class HomeComponent implements OnInit{
   constructor(
     private clienteService: ClienteService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     public msgService: MessageService) { }
 
   ngOnInit(): void {
@@ -88,7 +87,6 @@ export class HomeComponent implements OnInit{
           nombre: producto.nombre,
           apellido: producto.apellido,
         });
-        this.cdr.detectChanges(); 
       },
       error: (error) => {
         console.error("Error al obtener el cliente por ID", error);
@@ -109,7 +107,6 @@ export class HomeComponent implements OnInit{
       next: () => {
           this.msgService.add({ severity: 'warn', summary: "Éxito", detail: "Cliente actualizado" });
           this.getAllClientes();
-          this.cdr.detectChanges(); 
           this.clienteDetalle.reset();
       },
       error: (error: HttpErrorResponse) => {
@@ -142,7 +139,6 @@ export class HomeComponent implements OnInit{
       next: () => {
           this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Cliente eliminado' });
           this.getAllClientes();
-          this.cdr.detectChanges(); 
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al eliminar el cliente', error);

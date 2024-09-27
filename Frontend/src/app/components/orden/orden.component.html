@@ -86,7 +86,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" multiple>
+                        <select formControlName="articulo" class="form-select" required>
                             <option value="" disabled selected>Seleccione un artículo</option>
                             <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
                         </select>
@@ -128,7 +128,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" multiple>
+                        <select formControlName="articulo" class="form-select" required>
                             <option value="" disabled selected>Seleccione un artículo</option>
                             <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
                         </select>
