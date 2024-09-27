@@ -16,17 +16,17 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let client of clientes">
+            <tr *ngFor="let client of clients">
                 <td>{{ client.id }}</td>
-                <td>{{ client.nombre }}</td>
-                <td>{{ client.apellido }}</td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.lastname }}</td>
                 <td>
-                    <ul *ngIf="client.ordenes && client.ordenes.length > 0">
-                        <li *ngFor="let orden of client.ordenes">
-                            {{ orden.codigo }} - {{ orden.fecha | date:'dd/MM/yyyy' }}
+                    <ul *ngIf="client.orders && client.orders.length > 0">
+                        <li *ngFor="let order of client.orders">
+                            {{ order.code }} - {{ order.date | date:'dd/MM/yyyy' }}
                         </li>
                     </ul>
-                    <span *ngIf="!client.ordenes || client.ordenes.length === 0">Sin órdenes</span>
+                    <span *ngIf="!client.orders || client.orders.length === 0">Sin órdenes</span>
                 </td>
                 <td class="text-center">
                     <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
@@ -64,7 +64,7 @@
     </ng-template>
 </p-toast>
 
-<!-- Agregar producto modal -->
+
 <div class="modal fade" id="agregarModalCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog draggable modal-dialog-centered">
         <div class="modal-content">
@@ -74,16 +74,16 @@
             </div>
             <div class="modal-body">
 
-                <form [formGroup]="clienteDetalle">
+                <form [formGroup]="clientDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Nombre </label>
-                        <input type="text" formControlName="nombre" class="form-control" id="nombre" required>
+                        <input type="text" formControlName="name" class="form-control" id="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Apellido </label>
-                        <input type="text" formControlName="apellido" class="form-control" id="apellido" required>
+                        <input type="text" formControlName="lastname" class="form-control" id="lastname" required>
                     </div>
                     <br>
                     <div class="modal-footer">
@@ -107,23 +107,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="clienteDetalle">
+                <form [formGroup]="clientDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Nombre </label>
-                        <input type="text" formControlName="nombre" class="form-control" id="nombre">
+                        <input type="text" formControlName="name" class="form-control" id="name">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Apellido </label>
-                        <input type="text" formControlName="apellido" class="form-control" id="apellido">
+                        <input type="text" formControlName="lastname" class="form-control" id="lastname">
                     </div>
                     <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
                                 class="fa fa-cancel"></span>Cerrar</button>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
-                            (click)="actualizarCliente()"><span class="pi pi-save"></span> Actualizar</button>
+                            (click)="updateClient()"><span class="pi pi-save"></span> Actualizar</button>
                     </div>
                 </form>
             </div>

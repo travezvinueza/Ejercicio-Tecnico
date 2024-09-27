@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Articulo } from '../../interfaces/articulo';
-import { Orden } from '../../interfaces/orden';
+import { Article } from '../../interfaces/article';
+import { Order } from '../../interfaces/order';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ArticuloService } from '../../services/articulo.service';
+import { ArticleService } from '../../services/article.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { OrdenService } from '../../services/orden.service';
+import { OrderService } from '../../services/order.service';
 import { RouterModule } from '@angular/router';
 
 declare var $: any;
@@ -21,25 +21,22 @@ declare var $: any;
 })
 export class ArticuloComponent implements OnInit {
 
-  articulos: Articulo[] = [];
-  ordenes: Orden[] = [];
-  articuloDetalle !: FormGroup;
-  articuloToDelete: Articulo | undefined;
+  articles: Article[] = [];
+  articleDetail !: FormGroup;
+  articleToDelete: Article | undefined;
 
   constructor(
-    private articuloService: ArticuloService,
-    private ordenService: OrdenService,
+    private articleService: ArticleService,
     private formBuilder: FormBuilder,
     public msgService: MessageService) { }
 
   ngOnInit(): void {
-    this.getAllArticulos();
-    this.getAllOrdenes();
-    this.articuloDetalle = this.formBuilder.group({
+    this.getAllArticles();
+    this.articleDetail = this.formBuilder.group({
       id: [''],
-      codigo: [''],
-      nombre: [''],
-      precioUnitario: [''],
+      code: [''],
+      name: [''],
+      unitPrice: [''],
     });
   }
 
@@ -50,10 +47,10 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  getAllOrdenes() {
-    this.ordenService.listarOrdenes().subscribe({
-      next: (data: Orden[]) => {
-        this.ordenes = data;
+  getAllArticles() {
+    this.articleService.listarArticulos().subscribe({
+      next: (data: Article[]) => {
+        this.articles = data;
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al obtener las ordenes", error);
@@ -61,25 +58,14 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  getAllArticulos() {
-    this.articuloService.listarArticulos().subscribe({
-      next: (data: Articulo[]) => {
-        this.articulos = data;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Error al obtener las ordenes", error);
-      }
-    });
-  }
-
-  editArticulo(id: number) {
-    this.articuloService.obtenerArticuloPorId(id).subscribe({
-      next: (articulo: Articulo) => {
-        this.articuloDetalle.patchValue({
+  editArticle(id: number) {
+    this.articleService.obtenerArticuloPorId(id).subscribe({
+      next: (articulo: Article) => {
+        this.articleDetail.patchValue({
           id: articulo.id,
-          codigo: articulo.codigo,
-          nombre: articulo.nombre,
-          precioUnitario: articulo.precioUnitario,
+          code: articulo.code,
+          name: articulo.name,
+          unitPrice: articulo.unitPrice,
         });
       },
       error: (error) => {
@@ -89,15 +75,15 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  crearArticulo() {
-    const articulo: Articulo = this.articuloDetalle.value;
+  createArticle() {
+    const articulo: Article = this.articleDetail.value;
 
-    this.articuloService.crearArticulo(articulo).subscribe({
+    this.articleService.crearArticulo(articulo).subscribe({
       next: (nuevoArticulo) => {
-        this.articulos.push(nuevoArticulo);
+        this.articles.push(nuevoArticulo);
         this.msgService.add({ severity: 'success', summary: 'Éxito', detail: 'Artículo creado exitosamente.' });
-        this.articuloDetalle.reset();
-        this.getAllArticulos();
+        this.articleDetail.reset();
+        this.getAllArticles();
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al crear el artículo", error);
@@ -106,18 +92,18 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  actualizarArticulo() {
-    const articulo: Articulo = this.articuloDetalle.value;
+  updateArticle() {
+    const articulo: Article = this.articleDetail.value;
 
-    this.articuloService.actualizarArticulo(articulo).subscribe({
+    this.articleService.actualizarArticulo(articulo).subscribe({
       next: (articuloActualizado) => {
-        const index = this.articulos.findIndex(a => a.id === articuloActualizado.id);
+        const index = this.articles.findIndex(a => a.id === articuloActualizado.id);
         if (index !== -1) {
-          this.articulos[index] = articuloActualizado;
+          this.articles[index] = articuloActualizado;
         }
         this.msgService.add({ severity: 'success', summary: 'Éxito', detail: 'Artículo actualizado exitosamente.' });
-        this.articuloDetalle.reset();
-        this.getAllArticulos();
+        this.articleDetail.reset();
+        this.getAllArticles();
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al actualizar el artículo", error);
@@ -126,8 +112,8 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-  showConfirmation(articulo: Articulo) {
-    this.articuloToDelete = articulo;
+  showConfirmation(articulo: Article) {
+    this.articleToDelete = articulo;
     this.msgService.add({
       key: 'confirm',
       sticky: true,
@@ -138,17 +124,17 @@ export class ArticuloComponent implements OnInit {
   }
 
   confirmDelete() {
-    if (this.articuloToDelete && this.articuloToDelete.id) {
-      this.deleteArticulo(this.articuloToDelete.id);
+    if (this.articleToDelete && this.articleToDelete.id) {
+      this.deleteArticulo(this.articleToDelete.id);
       this.msgService.clear('confirm');
     }
   }
 
   deleteArticulo(id: number) {
-    this.articuloService.eliminarArticulo(id).subscribe({
+    this.articleService.eliminarArticulo(id).subscribe({
       next: () => {
-          this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Articulo eliminado' });
-          this.getAllArticulos();
+        this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Articulo eliminado' });
+        this.getAllArticles();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al eliminar el articulo', error);
@@ -156,5 +142,5 @@ export class ArticuloComponent implements OnInit {
       }
     });
   }
-  
+
 }

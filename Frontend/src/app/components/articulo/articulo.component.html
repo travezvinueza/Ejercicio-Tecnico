@@ -16,18 +16,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let articulo of articulos">
-                <td>{{articulo.id}}</td>
-                <td>{{articulo.codigo}}</td>
-                <td>{{articulo.nombre}}</td>
-                <td>{{articulo.precioUnitario}}</td>
+            <tr *ngFor="let article of articles">
+                <td>{{article.id}}</td>
+                <td>{{article.code}}</td>
+                <td>{{article.name}}</td>
+                <td>{{article.unitPrice}}</td>
             
                 <td class="text-center">
                     <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
-                        data-bs-target="#editarModalArticulo" (click)="articulo.id && editArticulo(articulo.id)">
+                        data-bs-target="#editarModalArticulo" (click)="article.id && editArticle(article.id)">
                         <i class="fa fa-pencil"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm" (click)="showConfirmation(articulo)">
+                    <button class="btn btn-danger btn-sm" (click)="showConfirmation(article)">
                         <i class="fa fa-trash"></i>
                     </button>
 
@@ -69,17 +69,17 @@
             </div>
             <div class="modal-body">
 
-                <form [formGroup]="articuloDetalle">
+                <form [formGroup]="articleDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
-                        <input type="text" formControlName="nombre" class="form-control" id="nombre" required>
+                        <input type="text" formControlName="name" class="form-control" id="name" required>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Precio Unitario</label>
-                        <input type="text" formControlName="precioUnitario" class="form-control" id="precioUnitario" required>
+                        <input type="text" formControlName="unitPrice" class="form-control" id="unitPrice" required>
                     </div>
                         
                     <br>
@@ -87,7 +87,7 @@
                         <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
                                 class="fa fa-cancel"></i>Cancelar</button>
                         <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
-                            (click)="crearArticulo()"><i class="fa fa-save"></i>Agregar </button>
+                            (click)="createArticle()"><i class="fa fa-save"></i>Agregar </button>
                     </div>
                 </form>
             </div>
@@ -104,26 +104,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="articuloDetalle">
+                <form [formGroup]="articleDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
-                        <input type="text" formControlName="nombre" class="form-control" id="nombre" required>
+                        <input type="text" formControlName="name" class="form-control" id="name" required>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Precio Unitario</label>
-                        <input type="text" formControlName="precioUnitario" class="form-control" id="precioUnitario" required>
+                        <input type="text" formControlName="unitPrice" class="form-control" id="unitPrice" required>
                     </div>
-
 
                     <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
                                 class="fa fa-cancel"></span>Cerrar</button>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
-                            (click)="actualizarArticulo()"><span class="pi pi-save"></span> Actualizar</button>
+                            (click)="updateArticle()"><span class="pi pi-save"></span> Actualizar</button>
                     </div>
                 </form>
             </div>

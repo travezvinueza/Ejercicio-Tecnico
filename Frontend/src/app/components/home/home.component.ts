@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ToastModule } from 'primeng/toast';
-import { Cliente } from '../../interfaces/cliente';
+import { Client } from '../../interfaces/client';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ClienteService } from '../../services/cliente.service';
+import { ClientService } from '../../services/client.service';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -17,23 +17,23 @@ declare var $: any;
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
 
-  clientes: Cliente[] = [];
-  clienteDetalle !: FormGroup;
-  clienteToDelete: Cliente | undefined;
+  clients: Client[] = [];
+  clientDetail !: FormGroup;
+  clientToDelete: Client | undefined;
 
   constructor(
-    private clienteService: ClienteService,
+    private clientService: ClientService,
     private formBuilder: FormBuilder,
     public msgService: MessageService) { }
 
   ngOnInit(): void {
     this.getAllClientes();
-    this.clienteDetalle = this.formBuilder.group({
+    this.clientDetail = this.formBuilder.group({
       id: [''],
-      nombre: [''],
-      apellido: [''],
+      name: [''],
+      lastname: [''],
     });
   }
 
@@ -45,10 +45,10 @@ export class HomeComponent implements OnInit{
   }
 
   getAllClientes() {
-    this.clienteService.listarClientes().subscribe({
-      next: (data: Cliente[]) => {
+    this.clientService.listarClientes().subscribe({
+      next: (data: Client[]) => {
         debugger
-        this.clientes = data;
+        this.clients = data;
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al obtener los clientes", error);
@@ -57,20 +57,20 @@ export class HomeComponent implements OnInit{
   }
 
   addCliente() {
-    const nuevoCliente: Cliente = {
+    const nuevoCliente: Client = {
       id: 0,
-      nombre: this.clienteDetalle.value.nombre,
-      apellido: this.clienteDetalle.value.apellido,
-      ordenes: []
+      name: this.clientDetail.value.name,
+      lastname: this.clientDetail.value.lastname,
+      orders: []
     };
 
-    this.clienteService.crearCliente(nuevoCliente).subscribe({
+    this.clientService.crearCliente(nuevoCliente).subscribe({
       next: (response: any) => {
         debugger
         if (response) {
           this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Cliente creado exitosamente" });
           this.getAllClientes();
-          this.clienteDetalle.reset();
+          this.clientDetail.reset();
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -80,12 +80,12 @@ export class HomeComponent implements OnInit{
   }
 
   editCliente(id: number) {
-    this.clienteService.obtenerClientePorId(id).subscribe({
-      next: (producto: Cliente) => {
-        this.clienteDetalle.patchValue({
+    this.clientService.obtenerClientePorId(id).subscribe({
+      next: (producto: Client) => {
+        this.clientDetail.patchValue({
           id: producto.id,
-          nombre: producto.nombre,
-          apellido: producto.apellido,
+          name: producto.name,
+          lastname: producto.lastname,
         });
       },
       error: (error) => {
@@ -95,19 +95,19 @@ export class HomeComponent implements OnInit{
     });
   }
 
-  actualizarCliente() {
-    const clienteActualizado: Cliente = {
-      id: this.clienteDetalle.value.id,
-      nombre: this.clienteDetalle.value.nombre,
-      apellido: this.clienteDetalle.value.apellido,
-      ordenes: []
+  updateClient() {
+    const clienteActualizado: Client = {
+      id: this.clientDetail.value.id,
+      name: this.clientDetail.value.name,
+      lastname: this.clientDetail.value.lastname,
+      orders: []
     };
 
-    this.clienteService.actualizarCliente(clienteActualizado.id, clienteActualizado).subscribe({
+    this.clientService.actualizarCliente(clienteActualizado.id, clienteActualizado).subscribe({
       next: () => {
-          this.msgService.add({ severity: 'warn', summary: "Éxito", detail: "Cliente actualizado" });
-          this.getAllClientes();
-          this.clienteDetalle.reset();
+        this.msgService.add({ severity: 'warn', summary: "Éxito", detail: "Cliente actualizado" });
+        this.getAllClientes();
+        this.clientDetail.reset();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al actualizar el cliente:', error);
@@ -116,8 +116,8 @@ export class HomeComponent implements OnInit{
     });
   }
 
-  showConfirmation(cliente: Cliente) {
-    this.clienteToDelete = cliente;
+  showConfirmation(cliente: Client) {
+    this.clientToDelete = cliente;
     this.msgService.add({
       key: 'confirm',
       sticky: true,
@@ -128,17 +128,17 @@ export class HomeComponent implements OnInit{
   }
 
   confirmDelete() {
-    if (this.clienteToDelete && this.clienteToDelete.id) {
-      this.deleteClient(this.clienteToDelete.id);
+    if (this.clientToDelete && this.clientToDelete.id) {
+      this.deleteClient(this.clientToDelete.id);
       this.msgService.clear('confirm');
     }
   }
 
   deleteClient(id: number) {
-    this.clienteService.eliminarCliente(id).subscribe({
+    this.clientService.eliminarCliente(id).subscribe({
       next: () => {
-          this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Cliente eliminado' });
-          this.getAllClientes();
+        this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Cliente eliminado' });
+        this.getAllClientes();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al eliminar el cliente', error);

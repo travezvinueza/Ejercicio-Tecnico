@@ -1,8 +1,8 @@
 package com.ejercicio_tecnico.backend.controller;
 
-import com.ejercicio_tecnico.backend.exception.ArticuloNotFoundException;
-import com.ejercicio_tecnico.backend.exception.ClienteNotFoundException;
-import com.ejercicio_tecnico.backend.exception.OrdenNotFoundException;
+import com.ejercicio_tecnico.backend.exception.ArticleNotFoundException;
+import com.ejercicio_tecnico.backend.exception.ClientNotFoundException;
+import com.ejercicio_tecnico.backend.exception.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ClienteNotFoundException.class)
-    public ResponseEntity<String> handleClienteNotFoundException(ClienteNotFoundException ex) {
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<String> handleClienteNotFoundException(ClientNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(OrdenNotFoundException.class)
-    public ResponseEntity<String> handleOrdenNotFoundException(OrdenNotFoundException ex) {
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<String> handleOrdenNotFoundException(OrderNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ArticuloNotFoundException.class)
-    public ResponseEntity<String> handleArticuloNotFoundException(ArticuloNotFoundException ex) {
+    @ExceptionHandler(ArticleNotFoundException.class)
+    public ResponseEntity<String> handleArticuloNotFoundException(ArticleNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

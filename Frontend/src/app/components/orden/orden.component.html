@@ -16,20 +16,20 @@
             </tr>
         </thead> 
         <tbody>
-            <tr *ngFor="let order of ordenes">
+            <tr *ngFor="let order of orders">
                 <td>{{ order.id }}</td>
-                <td>{{ order.codigo }}</td>
-                <td>{{ order.fecha }}</td>
+                <td>{{ order.code }}</td>
+                <td>{{ order.date }}</td>
                 <td>
                     <ul>
-                        <li *ngFor="let articulo of order.articulos">
-                            {{ articulo.codigo }} - {{ articulo.nombre }} - {{ articulo.precioUnitario }}
+                        <li *ngFor="let article of order.articles">
+                            {{ article.code }} - {{ article.name }} - {{ article.unitPrice }}
                         </li>
                     </ul>
                 </td>
                 <td class="text-center">
                     <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
-                        data-bs-target="#editarModalOrden" (click)="order.id && editOrden(order.id)">
+                        data-bs-target="#editarModalOrden" (click)="order.id && editOrder(order.id)">
                         Editar
                     </button>
                     <button class="btn btn-danger btn-sm me-1" (click)="showConfirmation(order)">
@@ -73,22 +73,22 @@
             </div>
             <div class="modal-body">
 
-                <form [formGroup]="ordenDetalle">
+                <form [formGroup]="orderDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>
-                        <select formControlName="clienteId" class="form-select" id="clienteId" required>
+                        <select formControlName="clientId" class="form-select" id="clientId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }} - {{ cliente.apellido }}</option> 
+                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{ client.lastname }}</option> 
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" required>
+                        <select formControlName="article" class="form-select" required>
                             <option value="" disabled selected>Seleccione un artículo</option>
-                            <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
+                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}</option>
                         </select>
                     </div>
                     
@@ -97,7 +97,7 @@
                         <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
                                 class="fa fa-cancel"></i>Cancelar</button>
                         <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
-                            (click)="addOrden()"><i class="fa fa-save"></i>Agregar </button>
+                            (click)="addOrder()"><i class="fa fa-save"></i>Agregar </button>
                     </div>
                 </form>
             </div>
@@ -114,23 +114,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form [formGroup]="ordenDetalle">
+                <form [formGroup]="orderDetail">
 
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>
-                        <select formControlName="clienteId" class="form-select" id="clienteId" required>
+                        <select formControlName="clientId" class="form-select" id="clientId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }} - {{ cliente.apellido }}</option> 
+                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{ client.lastname }}</option> 
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" required>
+                        <select formControlName="article" class="form-select" required>
                             <option value="" disabled selected>Seleccione un artículo</option>
-                            <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
+                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}</option>
                         </select>
                     </div>
                         
@@ -139,7 +139,7 @@
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
                                 class="fa fa-cancel"></span>Cerrar</button>
                         <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
-                            (click)="actualizarOrden()"><span class="pi pi-save"></span> Actualizar</button>
+                            (click)="updateOrders()"><span class="pi pi-save"></span> Actualizar</button>
                     </div>
                 </form>
             </div>

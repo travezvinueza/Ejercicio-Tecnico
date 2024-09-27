@@ -11,11 +11,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrdenDto {
+public class OrderDto {
     private Long id;
-    private String codigo;
+    private String code;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate fecha;
-    private Long clienteId;
-    private List<ArticuloDto> articulos;
+    private LocalDate date;
+    private Long clientId;
+    private List<ArticleDto> articles;
 }

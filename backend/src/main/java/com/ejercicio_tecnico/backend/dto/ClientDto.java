@@ -2,16 +2,16 @@ package com.ejercicio_tecnico.backend.dto;
 
 import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticuloDto {
+public class ClientDto {
     private Long id;
-    private String codigo;
-    private String nombre;
-    private BigDecimal precioUnitario;
+    private String name;
+    private String lastname;
+    private List<OrderDto> orders;
 }
