@@ -3,5 +3,4 @@ export interface Articulo {
     codigo: string;
     nombre: string;
     precioUnitario: number;
-    ordenId: number;
 }

@@ -15,12 +15,12 @@ export class OrdenService {
   constructor(private http: HttpClient) { }
 
 
-  crearOrden(orden: Orden, clienteId: number): Observable<Orden> {
-    return this.http.post<Orden>(`${this.ordenApi}/crear/orden/${clienteId}`, orden);
+  crearOrden(orden: Orden): Observable<Orden> {
+    return this.http.post<Orden>(`${this.ordenApi}/crear/orden`, orden);
   }
 
-  actualizarOrden(id: number, orden: Orden): Observable<Orden> {
-    return this.http.put<Orden>(`${this.ordenApi}/actualizar-orden/${id}`, orden);
+  actualizarOrden(orden: Orden): Observable<Orden> {
+    return this.http.put<Orden>(`${this.ordenApi}/actualizar-orden`, orden);
   }
 
   obtenerOrdenPorId(id: number): Observable<Orden> {

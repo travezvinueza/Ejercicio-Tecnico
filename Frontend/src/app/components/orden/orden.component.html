@@ -80,13 +80,13 @@
                         <label class="form-label">Cliente</label>
                         <select formControlName="clienteId" class="form-select" id="clienteId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option> 
+                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }} - {{ cliente.apellido }}</option> 
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" required>
+                        <select formControlName="articulo" class="form-select" multiple>
                             <option value="" disabled selected>Seleccione un artículo</option>
                             <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
                         </select>
@@ -122,13 +122,13 @@
                         <label class="form-label">Cliente</label>
                         <select formControlName="clienteId" class="form-select" id="clienteId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option> 
+                            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }} - {{ cliente.apellido }}</option> 
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articulo" class="form-select" required>
+                        <select formControlName="articulo" class="form-select" multiple>
                             <option value="" disabled selected>Seleccione un artículo</option>
                             <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
                         </select>

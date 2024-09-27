@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Articulo } from '../../interfaces/articulo';
 import { Orden } from '../../interfaces/orden';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -30,7 +30,6 @@ export class ArticuloComponent implements OnInit {
     private articuloService: ArticuloService,
     private ordenService: OrdenService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     public msgService: MessageService) { }
 
   ngOnInit(): void {
@@ -41,7 +40,6 @@ export class ArticuloComponent implements OnInit {
       codigo: [''],
       nombre: [''],
       precioUnitario: [''],
-      ordenId: ['']
     });
   }
 
@@ -74,7 +72,6 @@ export class ArticuloComponent implements OnInit {
     });
   }
 
-
   editArticulo(id: number) {
     this.articuloService.obtenerArticuloPorId(id).subscribe({
       next: (articulo: Articulo) => {
@@ -83,12 +80,10 @@ export class ArticuloComponent implements OnInit {
           codigo: articulo.codigo,
           nombre: articulo.nombre,
           precioUnitario: articulo.precioUnitario,
-          ordenId: articulo.ordenId
         });
-        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error("Error al obtenerel articulo: ", error);
+        console.error("Error al obtener el articulo: ", error);
         this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener articulo' });
       }
     });
@@ -154,7 +149,6 @@ export class ArticuloComponent implements OnInit {
       next: () => {
           this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Articulo eliminado' });
           this.getAllArticulos();
-          this.cdr.detectChanges();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al eliminar el articulo', error);
@@ -162,5 +156,5 @@ export class ArticuloComponent implements OnInit {
       }
     });
   }
-
+  
 }

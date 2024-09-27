@@ -16,15 +16,15 @@ public class OrdenController {
 
     private final OrdenService ordenService;
 
-    @PostMapping("/crear/orden/{clienteId}")
-    public ResponseEntity<OrdenDto> crearOrden(@RequestBody OrdenDto ordenDto, @PathVariable Long clienteId) {
-        OrdenDto nuevaOrden = ordenService.crearOrden(ordenDto, clienteId);
+    @PostMapping("/crear/orden")
+    public ResponseEntity<OrdenDto> crearOrden(@RequestBody OrdenDto ordenDto) {
+        OrdenDto nuevaOrden = ordenService.crearOrden(ordenDto);
         return new ResponseEntity<>(nuevaOrden, HttpStatus.CREATED);
     }
 
-    @PutMapping("/actualizar-orden/{id}")
-    public ResponseEntity<OrdenDto> actualizarOrden(@PathVariable Long id, @RequestBody OrdenDto ordenDto) {
-        OrdenDto ordenActualizada = ordenService.actualizarOrden(id, ordenDto);
+    @PutMapping("/actualizar-orden")
+    public ResponseEntity<OrdenDto> actualizarOrden(@RequestBody OrdenDto ordenDto) {
+        OrdenDto ordenActualizada = ordenService.actualizarOrden(ordenDto);
         return new ResponseEntity<>(ordenActualizada, HttpStatus.OK);
     }
 

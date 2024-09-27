@@ -1,11 +1,9 @@
 package com.ejercicio_tecnico.backend.service.impl;
 
-import com.ejercicio_tecnico.backend.dto.ArticuloDto;
 import com.ejercicio_tecnico.backend.dto.OrdenDto;
 import com.ejercicio_tecnico.backend.entity.Articulo;
 import com.ejercicio_tecnico.backend.entity.Cliente;
 import com.ejercicio_tecnico.backend.entity.Orden;
-import com.ejercicio_tecnico.backend.exception.ArticuloNotFoundException;
 import com.ejercicio_tecnico.backend.exception.ClienteNotFoundException;
 import com.ejercicio_tecnico.backend.exception.OrdenNotFoundException;
 import com.ejercicio_tecnico.backend.repository.ArticuloRepository;
@@ -17,7 +15,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,29 +27,25 @@ public class OrdenServiceImpl implements OrdenService {
     private final ModelMapper modelMapper;
 
     @Override
-    public OrdenDto crearOrden(OrdenDto ordenDto, Long clienteId) {
-        Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new ClienteNotFoundException("Cliente no encontrado con ID: " + clienteId));
+    public OrdenDto crearOrden(OrdenDto ordenDto) {
+        Cliente cliente = clienteRepository.findById(ordenDto.getClienteId())
+                .orElseThrow(() -> new ClienteNotFoundException("Cliente no encontrado con ID: " + ordenDto.getClienteId()));
 
         Orden orden = modelMapper.map(ordenDto, Orden.class);
         orden.setCodigo(generateCodigoUnico());
         orden.setFecha(LocalDate.now());
         orden.setCliente(cliente);
 
-        if (ordenDto.getArticulos() != null && !ordenDto.getArticulos().isEmpty()) {
-            List<Articulo> articulos = new ArrayList<>();
-            for (ArticuloDto articuloDto : ordenDto.getArticulos()) {
-                Articulo articulo = articuloRepository.findById(articuloDto.getId())
-                        .orElseThrow(() -> new ArticuloNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
+        List<Articulo> articulos = ordenDto.getArticulos().stream().map(articuloDto -> {
+            Articulo articulo = modelMapper.map(articuloDto, Articulo.class);
+            articulo.setOrden(orden);
+            return articulo;
+        }).toList();
 
-
-                articulo.setOrden(orden);
-                articulos.add(articulo);
-            }
-            orden.setArticulos(articulos);
-        }
+        orden.setArticulos(articulos);
 
         Orden nuevaOrden = ordenRepository.save(orden);
+
         return modelMapper.map(nuevaOrden, OrdenDto.class);
     }
 
@@ -62,35 +55,28 @@ public class OrdenServiceImpl implements OrdenService {
     }
 
     @Override
-    public OrdenDto actualizarOrden(Long id, OrdenDto ordenDto) {
-        Orden ordenExistente = ordenRepository.findById(id)
-                .orElseThrow(() -> new OrdenNotFoundException("Orden no encontrada con ID: " + id));
+    public OrdenDto actualizarOrden(OrdenDto ordenDto) {
+        Orden ordenExistente = ordenRepository.findById(ordenDto.getId())
+                .orElseThrow(() -> new OrdenNotFoundException("Orden no encontrada con ID: " + ordenDto.getId()));
 
-        if (ordenDto.getClienteId() != null) {
-            Cliente cliente = clienteRepository.findById(ordenDto.getClienteId())
-                    .orElseThrow(() -> new ClienteNotFoundException("Cliente no encontrado con ID: " + ordenDto.getClienteId()));
-            ordenExistente.setCliente(cliente);
-        }
+        Cliente cliente = clienteRepository.findById(ordenDto.getClienteId())
+                .orElseThrow(() -> new ClienteNotFoundException("Cliente no encontrado con ID: " + ordenDto.getClienteId()));
+        ordenExistente.setCliente(cliente);
 
-        if (ordenDto.getArticulos() != null && !ordenDto.getArticulos().isEmpty()) {
-            ordenExistente.getArticulos().clear();
+        ordenExistente.getArticulos().clear();
 
-            List<Articulo> articulosActualizados = new ArrayList<>();
-            for (ArticuloDto articuloDto : ordenDto.getArticulos()) {
-                Articulo articulo = articuloRepository.findById(articuloDto.getId())
-                        .orElseThrow(() -> new ArticuloNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
+        List<Articulo> articulosActualizados = ordenDto.getArticulos().stream().map(articuloDto -> {
+            Articulo articulo = modelMapper.map(articuloDto, Articulo.class);
+            articulo.setOrden(ordenExistente);
+            return articulo;
+        }).toList();
 
-                articulo.setOrden(ordenExistente);
-                articulosActualizados.add(articulo);
-            }
-            ordenExistente.setArticulos(articulosActualizados);
-        }
+        ordenExistente.setArticulos(articulosActualizados);
 
         Orden ordenActualizada = ordenRepository.save(ordenExistente);
 
         return modelMapper.map(ordenActualizada, OrdenDto.class);
     }
-
 
     @Override
     public List<OrdenDto> listarOrdenes() {

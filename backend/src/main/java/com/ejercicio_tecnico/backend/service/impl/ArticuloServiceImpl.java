@@ -2,11 +2,8 @@ package com.ejercicio_tecnico.backend.service.impl;
 
 import com.ejercicio_tecnico.backend.dto.ArticuloDto;
 import com.ejercicio_tecnico.backend.entity.Articulo;
-import com.ejercicio_tecnico.backend.entity.Orden;
 import com.ejercicio_tecnico.backend.exception.ArticuloNotFoundException;
-import com.ejercicio_tecnico.backend.exception.OrdenNotFoundException;
 import com.ejercicio_tecnico.backend.repository.ArticuloRepository;
-import com.ejercicio_tecnico.backend.repository.OrdenRepository;
 import com.ejercicio_tecnico.backend.service.ArticuloService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -44,7 +41,6 @@ public class ArticuloServiceImpl implements ArticuloService {
         Articulo articulo = articuloRepository.findById(articuloDto.getId())
                 .orElseThrow(() -> new ArticuloNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
 
-        articulo.setCodigo(articuloDto.getCodigo());
         articulo.setNombre(articuloDto.getNombre());
         articulo.setPrecioUnitario(articuloDto.getPrecioUnitario());
 
