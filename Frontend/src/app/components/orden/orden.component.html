@@ -121,16 +121,16 @@
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>
                         <select formControlName="clienteId" class="form-select" id="clienteId" required>
-                            <option value="" disabled selected>Seleccione un cliente</option> 
+                            <option value="" disabled selected>Seleccione un cliente</option>
                             <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">{{ cliente.nombre }}</option> 
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Articulo</label>
-                        <select formControlName="articulo.id" class="form-select" id="articulo.id" required>
-                            <option value="" disabled selected>Seleccione un articulo</option>
-                            <option *ngFor="let articulo of articulos" [ngValue]="articulo.id">{{ articulo.nombre }}</option>
+                        <label class="form-label">Artículo</label>
+                        <select formControlName="articulo" class="form-select" required>
+                            <option value="" disabled selected>Seleccione un artículo</option>
+                            <option *ngFor="let articulo of articulos" [ngValue]="articulo">{{ articulo.nombre }}</option>
                         </select>
                     </div>
                         

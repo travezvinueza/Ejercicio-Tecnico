@@ -133,6 +133,8 @@ export class OrdenComponent implements OnInit {
           id: orden.id,
           codigo: orden.codigo,
           fecha: orden.fecha,
+          clienteId: orden.clienteId,
+          articulo: orden.articulos[0]
         });
         this.cdr.detectChanges();
       },
@@ -144,29 +146,43 @@ export class OrdenComponent implements OnInit {
   }
 
   actualizarOrden() {
-    const ordenActualizado: Orden = {
-      id: this.ordenDetalle.value.id,
+    const ordenId = this.ordenDetalle.value.id;
+    const clienteId = this.ordenDetalle.value.clienteId;
+  
+    if (!clienteId) {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un cliente' });
+      return;
+    }
+  
+    const selectedArticulo = this.ordenDetalle.value.articulo;
+  
+    if (!selectedArticulo) {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un artículo' });
+      return;
+    }
+  
+    const ordenActualizada: Orden = {
+      id: ordenId,
       codigo: this.ordenDetalle.value.codigo,
       fecha: this.ordenDetalle.value.fecha,
-      articulos: this.ordenDetalle.value.articulo,
-      clienteId: 0
+      articulos: [selectedArticulo], 
+      clienteId: clienteId
     };
-
-    const clienteId = this.ordenDetalle.value.clienteId;
-
-    this.ordenService.actualizarOrden(ordenActualizado.id, ordenActualizado).subscribe({
+  
+    this.ordenService.actualizarOrden(ordenId, ordenActualizada).subscribe({
       next: () => {
-        this.msgService.add({ severity: 'warn', summary: "Éxito", detail: "Orden actualizada correctamente" });
-        this.getAllClientes();
+        this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Orden actualizada exitosamente" });
+        this.getAllOrdenes(); 
         this.cdr.detectChanges();
         this.ordenDetalle.reset();
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Error al actualizar la orden:', error);
+        console.error('Error al actualizar la orden', error);
         this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar la orden' });
       }
     });
   }
+  
 
   showConfirmation(orden: Orden) {
     this.ordenToDelete = orden;

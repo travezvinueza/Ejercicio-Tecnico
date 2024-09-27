@@ -106,7 +106,7 @@ export class ArticuloComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         console.error("Error al crear el artículo", error);
-        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el artículo.' });
+        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo crear el artículo por que ya existe' });
       }
     });
   }
@@ -151,12 +151,10 @@ export class ArticuloComponent implements OnInit {
 
   deleteArticulo(id: number) {
     this.articuloService.eliminarArticulo(id).subscribe({
-      next: (response: any) => {
-        if (response && response.message) {
+      next: () => {
           this.msgService.add({ severity: 'success', summary: 'Exito', detail: 'Articulo eliminado' });
           this.getAllArticulos();
           this.cdr.detectChanges();
-        }
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al eliminar el articulo', error);

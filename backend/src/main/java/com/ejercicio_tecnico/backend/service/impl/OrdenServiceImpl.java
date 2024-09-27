@@ -52,7 +52,6 @@ public class OrdenServiceImpl implements OrdenService {
             orden.setArticulos(articulos);
         }
 
-
         Orden nuevaOrden = ordenRepository.save(orden);
         return modelMapper.map(nuevaOrden, OrdenDto.class);
     }
@@ -66,10 +65,32 @@ public class OrdenServiceImpl implements OrdenService {
     public OrdenDto actualizarOrden(Long id, OrdenDto ordenDto) {
         Orden ordenExistente = ordenRepository.findById(id)
                 .orElseThrow(() -> new OrdenNotFoundException("Orden no encontrada con ID: " + id));
-        modelMapper.map(ordenDto, ordenExistente);
+
+        if (ordenDto.getClienteId() != null) {
+            Cliente cliente = clienteRepository.findById(ordenDto.getClienteId())
+                    .orElseThrow(() -> new ClienteNotFoundException("Cliente no encontrado con ID: " + ordenDto.getClienteId()));
+            ordenExistente.setCliente(cliente);
+        }
+
+        if (ordenDto.getArticulos() != null && !ordenDto.getArticulos().isEmpty()) {
+            ordenExistente.getArticulos().clear();
+
+            List<Articulo> articulosActualizados = new ArrayList<>();
+            for (ArticuloDto articuloDto : ordenDto.getArticulos()) {
+                Articulo articulo = articuloRepository.findById(articuloDto.getId())
+                        .orElseThrow(() -> new ArticuloNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
+
+                articulo.setOrden(ordenExistente);
+                articulosActualizados.add(articulo);
+            }
+            ordenExistente.setArticulos(articulosActualizados);
+        }
+
         Orden ordenActualizada = ordenRepository.save(ordenExistente);
+
         return modelMapper.map(ordenActualizada, OrdenDto.class);
     }
+
 
     @Override
     public List<OrdenDto> listarOrdenes() {
