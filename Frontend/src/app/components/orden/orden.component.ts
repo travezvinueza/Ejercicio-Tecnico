@@ -45,7 +45,7 @@ export class OrdenComponent implements OnInit {
       code: [''],
       date: [''],
       clientId: [''],
-      article: this.formBuilder.control('')
+      articles: [[]]
     });
   }
 
@@ -57,36 +57,33 @@ export class OrdenComponent implements OnInit {
   }
 
   getAllClients() {
-    this.clientService.listarClientes().subscribe({
-      next: (data: Client[]) => {
+    this.clientService.listarClientes().subscribe(
+      (data) => {
         this.clients = data;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Error al obtener los clientes", error);
+      }),
+      (error: HttpErrorResponse) => {
+        console.error(error);
       }
-    });
   }
 
   getAllArticles() {
-    this.articleService.listarArticulos().subscribe({
-      next: (data: Article[]) => {
+    this.articleService.listarArticulos().subscribe(
+      (data) => {
         this.articles = data;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Error al obtener los artículos", error);
+      }),
+      (error: HttpErrorResponse) => {
+        console.error(error);
       }
-    });
   }
 
   getAllOrders() {
-    this.orderService.listarOrdenes().subscribe({
-      next: (data: Order[]) => {
+    this.orderService.listarOrdenes().subscribe(
+      (data) => {
         this.orders = data;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Error al obtener las ordenes", error);
+      }),
+      (error: HttpErrorResponse) => {
+        console.error(error);
       }
-    });
   }
 
   addOrder() {
@@ -97,26 +94,24 @@ export class OrdenComponent implements OnInit {
       return;
     }
 
-    const selectedArticulo = this.orderDetail.value.article;
+    const selectedArticles = this.orderDetail.value.articles;
 
-    if (!selectedArticulo) {
-      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Artículo no encontrado' });
+    if (!selectedArticles) {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar al menos un articulo' });
       return;
     }
 
     const nuevaOrden: Order = {
       id: 0,
-      code: this.orderDetail.value.code,
-      date: this.orderDetail.value.date,
-      articles: [selectedArticulo],
-      clientId: clientId
+      clientId: clientId,
+      articles: selectedArticles,
     };
 
     this.orderService.crearOrden(nuevaOrden).subscribe({
       next: () => {
         this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Orden creada exitosamente" });
-        this.getAllOrders();
         this.orderDetail.reset();
+        this.getAllOrders();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al crear la orden', error);
@@ -127,25 +122,22 @@ export class OrdenComponent implements OnInit {
   updateOrders() {
     const orderId = this.orderDetail.value.id;
     const clientId = this.orderDetail.value.clientId;
+    const selectedArticles = this.orderDetail.value.articles;
 
     if (!clientId) {
       this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un cliente' });
       return;
     }
 
-    const selectedArticulo = this.orderDetail.value.article;
-
-    if (!selectedArticulo) {
+    if (!selectedArticles) {
       this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un artículo' });
       return;
     }
 
     const ordenActualizada: Order = {
       id: orderId,
-      code: this.orderDetail.value.code,
-      date: this.orderDetail.value.date,
-      articles: [selectedArticulo],
-      clientId: clientId
+      clientId: clientId,
+      articles: selectedArticles.map((id: number) => ({ id }))
     };
  
     this.orderService.actualizarOrden(ordenActualizada).subscribe({
@@ -153,7 +145,7 @@ export class OrdenComponent implements OnInit {
         debugger
         this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Orden actualizada exitosamente" });
         this.getAllOrders();
-        this.orderDetail.reset();
+       this.orderDetail.reset();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al actualizar la orden', error);
@@ -164,14 +156,11 @@ export class OrdenComponent implements OnInit {
 
   editOrder(id: number) {
     this.orderService.obtenerOrdenPorId(id).subscribe({
-      next: (orden: Order) => {
-        this.orderDetail.patchValue({
-          id: orden.id,
-          code: orden.code,
-          date: orden.date,
-          clientId: orden.clientId,
-          article: orden.articles[0]
-        });
+      next: (orden) => {
+        this.orderDetail.patchValue(orden);
+
+        const selectedArticles = orden.articles.map(a => a.id); 
+        this.orderDetail.controls['articles'].setValue(selectedArticles); 
       },
       error: (error) => {
         console.error("Error al obtener la orden: ", error);

@@ -15,20 +15,20 @@ export class ClientService {
   constructor(public http: HttpClient) { }
 
 
-  crearCliente(cliente: Client): Observable<Client> {
-    return this.http.post<Client>(`${this.clienteApi}/create-client`, cliente);
-  }
-
-  obtenerClientePorId(id: number): Observable<Client> {
-    return this.http.get<Client>(`${this.clienteApi}/getById-client/${id}`);
-  }
-
   listarClientes(): Observable<Client[]> {
     return this.http.get<Client[]>(`${this.clienteApi}/list-clients`);
   }
 
-  actualizarCliente(id: number, cliente: Client): Observable<Client> {
-    return this.http.put<Client>(`${this.clienteApi}/update-client/${id}`, cliente);
+  crearCliente(client: Client): Observable<Client> {
+    return this.http.post<Client>(`${this.clienteApi}/create-client`, client);
+  }
+
+  actualizarCliente(id: number, client: Client): Observable<Client> {
+    return this.http.put<Client>(`${this.clienteApi}/update-client/${id}`, client);
+  }
+
+  obtenerClientePorId(id: number): Observable<Client> {
+    return this.http.get<Client>(`${this.clienteApi}/getById-client/${id}`);
   }
 
   eliminarCliente(id: number): Observable<void> {

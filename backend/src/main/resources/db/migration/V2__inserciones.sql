@@ -4,10 +4,10 @@ INSERT INTO clients (name, lastname) VALUES ('María', 'García');
 INSERT INTO clients (name, lastname) VALUES ('Carlos', 'López');
 
 -- Insertar órdenes
-INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-000001', '2024-09-23', 1);
-INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-000002', '2024-09-24', 1);
-INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-000003', '2024-09-24', 2);
-INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-000004', '2024-09-25', 3);
+INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-367641', '2024-09-23', 1);
+INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-456783', '2024-09-24', 1);
+INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-174563', '2024-09-24', 2);
+INSERT INTO orders (code, date, client_id) VALUES ('ORDEN-879876', '2024-09-25', 3);
 
 -- Insertar artículos (nombres únicos)
 INSERT INTO articles (code, name, unit_price, order_id) VALUES ('ARTICULO-000001', 'Audífonos', 12.99, 1);

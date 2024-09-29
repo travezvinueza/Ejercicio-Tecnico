@@ -19,12 +19,12 @@ export class ArticleService {
     return this.http.get<Article[]>(`${this.articleApi}/list-articles`);
   }
 
-  crearArticulo(articulo: Article): Observable<Article> {
-    return this.http.post<Article>(`${this.articleApi}/create-article`, articulo);
+  crearArticulo(article: Article): Observable<Article> {
+    return this.http.post<Article>(`${this.articleApi}/create-article`, article);
   }
 
-  actualizarArticulo(articulo: Article): Observable<Article> {
-    return this.http.put<Article>(`${this.articleApi}/update-article`, articulo)
+  actualizarArticulo(article: Article): Observable<Article> {
+    return this.http.put<Article>(`${this.articleApi}/update-article`, article)
   }
 
   obtenerArticuloPorId(id: number): Observable<Article> {

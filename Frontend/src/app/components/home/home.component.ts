@@ -45,15 +45,13 @@ export class HomeComponent implements OnInit {
   }
 
   getAllClientes() {
-    this.clientService.listarClientes().subscribe({
-      next: (data: Client[]) => {
-        debugger
+    this.clientService.listarClientes().subscribe(
+      (data) => {
         this.clients = data;
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error("Error al obtener los clientes", error);
+      }),
+      (error: HttpErrorResponse) => {
+        console.error(error);
       }
-    });
   }
 
   addCliente() {
@@ -65,32 +63,24 @@ export class HomeComponent implements OnInit {
     };
 
     this.clientService.crearCliente(nuevoCliente).subscribe({
-      next: (response: any) => {
-        debugger
-        if (response) {
-          this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Cliente creado exitosamente" });
-          this.getAllClientes();
-          this.clientDetail.reset();
-        }
+      next: () => {
+        this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Cliente creado exitosamente" });
+        this.clientDetail.reset();
+        this.getAllClientes();
       },
-      error: (error: HttpErrorResponse) => {
-        console.error('Error al crear el cliente', error);
+      error: (err: HttpErrorResponse) => {
+        console.error(err);
       }
     });
   }
 
   editCliente(id: number) {
     this.clientService.obtenerClientePorId(id).subscribe({
-      next: (producto: Client) => {
-        this.clientDetail.patchValue({
-          id: producto.id,
-          name: producto.name,
-          lastname: producto.lastname,
-        });
+      next: (client) => {
+        this.clientDetail.patchValue(client);
       },
-      error: (error) => {
-        console.error("Error al obtener el cliente por ID", error);
-        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener el cliente por ID' });
+      error: (err: HttpErrorResponse) => {
+        console.error(err);
       }
     });
   }
@@ -106,8 +96,8 @@ export class HomeComponent implements OnInit {
     this.clientService.actualizarCliente(clienteActualizado.id, clienteActualizado).subscribe({
       next: () => {
         this.msgService.add({ severity: 'warn', summary: "Éxito", detail: "Cliente actualizado" });
-        this.getAllClientes();
         this.clientDetail.reset();
+        this.getAllClientes();
       },
       error: (error: HttpErrorResponse) => {
         console.error('Error al actualizar el cliente:', error);

@@ -14,7 +14,7 @@
                 <th>Articulo</th>
                 <th class="text-center">Opciones</th>
             </tr>
-        </thead> 
+        </thead>
         <tbody>
             <tr *ngFor="let order of orders">
                 <td>{{ order.id }}</td>
@@ -22,6 +22,7 @@
                 <td>{{ order.date }}</td>
                 <td>
                     <ul>
+                        <li *ngIf="order.articles.length === 0">Sin artículos</li>
                         <li *ngFor="let article of order.articles">
                             {{ article.code }} - {{ article.name }} - {{ article.unitPrice }}
                         </li>
@@ -80,18 +81,19 @@
                         <label class="form-label">Cliente</label>
                         <select formControlName="clientId" class="form-select" id="clientId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{ client.lastname }}</option> 
+                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{
+                                client.lastname }}</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="article" class="form-select" required>
+                        <select formControlName="articles" class="form-select custom-select" multiple required>
                             <option value="" disabled selected>Seleccione un artículo</option>
                             <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}</option>
                         </select>
                     </div>
-                    
+
                     <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
@@ -122,18 +124,20 @@
                         <label class="form-label">Cliente</label>
                         <select formControlName="clientId" class="form-select" id="clientId" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{ client.lastname }}</option> 
+                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{
+                                client.lastname }}</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="article" class="form-select" required>
-                            <option value="" disabled selected>Seleccione un artículo</option>
-                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}</option>
+                        <select formControlName="articles" class="form-select custom-select" multiple required>
+                            <option *ngFor="let article of articles" [ngValue]="article.id">
+                                {{ article.name }}
+                            </option>
                         </select>
                     </div>
-                        
+
                     <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span

@@ -15,20 +15,20 @@ export class OrderService {
   constructor(private http: HttpClient) { }
 
 
-  crearOrden(orden: Order): Observable<Order> {
-    return this.http.post<Order>(`${this.ordenApi}/create-order`, orden);
+  listarOrdenes(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.ordenApi}/list-orders`);
   }
 
-  actualizarOrden(orden: Order): Observable<Order> {
-    return this.http.put<Order>(`${this.ordenApi}/update-order`, orden);
+  crearOrden(order: Order): Observable<Order> {
+    return this.http.post<Order>(`${this.ordenApi}/create-order`, order);
+  }
+
+  actualizarOrden(order: Order): Observable<Order> {
+    return this.http.put<Order>(`${this.ordenApi}/update-order`, order);
   }
 
   obtenerOrdenPorId(id: number): Observable<Order> {
     return this.http.get<Order>(`${this.ordenApi}/getById-order/${id}`);
-  }
-
-  listarOrdenes(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.ordenApi}/list-orders`);
   }
 
   eliminarOrden(id: number): Observable<void> {

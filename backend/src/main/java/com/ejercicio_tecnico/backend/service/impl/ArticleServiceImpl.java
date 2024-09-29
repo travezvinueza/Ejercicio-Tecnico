@@ -32,7 +32,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     private String generateCodigoUnico() {
-        long articuloCount = articleRepository.count() + 1;
+        Article lastArticle = articleRepository.findTopByOrderByIdDesc();
+        long articuloCount = (lastArticle != null) ? lastArticle.getId() + 1 : 1;
         return String.format("ARTICULO-%06d", articuloCount);
     }
 
