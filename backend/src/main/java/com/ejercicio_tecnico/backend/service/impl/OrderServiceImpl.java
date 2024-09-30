@@ -1,6 +1,6 @@
 package com.ejercicio_tecnico.backend.service.impl;
 
-import com.ejercicio_tecnico.backend.dto.ArticleDto;
+import com.ejercicio_tecnico.backend.dto.OrderArticleDto;
 import com.ejercicio_tecnico.backend.dto.OrderDto;
 import com.ejercicio_tecnico.backend.entity.Article;
 import com.ejercicio_tecnico.backend.entity.Client;
@@ -12,6 +12,7 @@ import com.ejercicio_tecnico.backend.repository.ArticleRepository;
 import com.ejercicio_tecnico.backend.repository.ClientRepository;
 import com.ejercicio_tecnico.backend.repository.OrderRepository;
 import com.ejercicio_tecnico.backend.service.OrderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,16 @@ public class OrderServiceImpl implements OrderService {
         order.setDate(LocalDate.now());
         order.setClient(client);
 
-        List<Article> articles = orderDto.getArticles().stream().map(articuloDto -> {
-            Article article = modelMapper.map(articuloDto, Article.class);
+        List<Article> articles = orderDto.getOrderArticleDtos().stream().map(articuloDto -> {
+            Article article = articleRepository.findById(articuloDto.getId())
+                            .orElseThrow(() -> new ArticleNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
+
+            if (articuloDto.getCantidad() > article.getStock()) {
+                throw new ArticleNotFoundException("No hay suficiente artículos " + article.getName());
+            }
+
+            article.setStock(article.getStock() - articuloDto.getCantidad());
+
             article.setOrder(order);
             return article;
         }).toList();
@@ -69,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         List<Article> articulosActuales = orderExistente.getArticles();
 
         // Agregar los artículos nuevos y actualizar su referencia
-        for (ArticleDto articuloDto : orderDto.getArticles()) {
+        for (OrderArticleDto articuloDto : orderDto.getOrderArticleDtos()) {
             Article article = articleRepository.findById(articuloDto.getId())
                     .orElseThrow(() -> new ArticleNotFoundException("Artículo no encontrado con ID: " + articuloDto.getId()));
 
@@ -104,9 +113,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void deleteOrder(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Orden no encontrada con ID: " + id));
+        articleRepository.clearOrderFromArticles(order.getId());
         orderRepository.delete(order);
     }
 }

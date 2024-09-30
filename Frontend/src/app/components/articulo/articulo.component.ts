@@ -34,6 +34,7 @@ export class ArticuloComponent implements OnInit {
       id: [''],
       code: [''],
       name: [''],
+      stock: [''],
       unitPrice: [''],
     });
   }
@@ -88,6 +89,7 @@ export class ArticuloComponent implements OnInit {
       id: this.articleDetail.value.id,
       code: this.articleDetail.value.code,
       name: this.articleDetail.value.name,
+      stock: this.articleDetail.value.stock,
       unitPrice: this.articleDetail.value.unitPrice
     };
     this.articleService.actualizarArticulo(articleUpdate).subscribe({

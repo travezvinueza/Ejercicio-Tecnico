@@ -22,7 +22,7 @@
                 <td>{{ order.date }}</td>
                 <td>
                     <ul>
-                        <li *ngIf="order.articles.length === 0">Sin artículos</li>
+
                         <li *ngFor="let article of order.articles">
                             {{ article.code }} - {{ article.name }} - {{ article.unitPrice }}
                         </li>
@@ -88,18 +88,24 @@
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articles" class="form-select custom-select" multiple required>
+                        <select formControlName="article" class="form-select" required>
                             <option value="" disabled selected>Seleccione un artículo</option>
-                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}</option>
+                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}
+                            </option>
                         </select>
                     </div>
-
+                    <label class="form-label">Cantidad</label>
+                    <input type="number" formControlName="cantidad" class="form-control" id="cantidad">
+                    <br>
+                    <p *ngFor="let list of orderArticles">{{ list.name }}</p>
+                    <button type="button" class="btn btn-success btn-sm" (click)="addArticle()"><i
+                            class="fa fa-save"></i>Agregar Articulo </button>
                     <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
                                 class="fa fa-cancel"></i>Cancelar</button>
                         <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
-                            (click)="addOrder()"><i class="fa fa-save"></i>Agregar </button>
+                            (click)="addOrder()"><i class="fa fa-save"></i>Crear Orden </button>
                     </div>
                 </form>
             </div>
@@ -131,7 +137,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Artículo</label>
-                        <select formControlName="articles" class="form-select custom-select" multiple required>
+                        <select formControlName="article" class="form-select custom-select" multiple required>
                             <option *ngFor="let article of articles" [ngValue]="article.id">
                                 {{ article.name }}
                             </option>

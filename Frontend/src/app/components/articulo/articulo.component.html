@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>Codigo</th>
                 <th>Nombre Ariculo</th>
+                <th>Stock</th>
                 <th>Precio Unitario</th>
                 <th class="text-center">Opciones</th>
             </tr>
@@ -20,6 +21,7 @@
                 <td>{{article.id}}</td>
                 <td>{{article.code}}</td>
                 <td>{{article.name}}</td>
+                <td>{{article.stock}}</td>
                 <td>{{article.unitPrice}}</td>
             
                 <td class="text-center">
@@ -80,6 +82,11 @@
                     <div class="mb-3">
                         <label class="form-label">Precio Unitario</label>
                         <input type="text" formControlName="unitPrice" class="form-control" id="unitPrice" required>
+                    </div>
+                      
+                    <div class="mb-3">
+                        <label class="form-label">Stock</label>
+                        <input type="number" formControlName="stock" class="form-control" id="stock" required>
                     </div>
                         
                     <br>

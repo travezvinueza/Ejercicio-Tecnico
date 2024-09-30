@@ -22,6 +22,9 @@ public class Article {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "stock", nullable = false)
+    private int stock;
+
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
