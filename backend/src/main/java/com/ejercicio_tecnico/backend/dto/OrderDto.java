@@ -8,7 +8,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDto {
@@ -17,6 +16,5 @@ public class OrderDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private Long clientId;
-    private List<OrderArticleDto> orderArticleDtos;
-    private List<ArticleDto> articles;
+    private List<OrderArticleDto> articles;
 }
