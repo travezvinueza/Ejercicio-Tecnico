@@ -1,10 +1,9 @@
-import { Article, OrderArticleDto } from "./article";
+import { OrderArticle } from "./orderArticle";
 
 export interface Order {
     id: number;
     code?: string;
     date?: Date;
     clientId: number;
-    orderArticleDtos: OrderArticleDto[];
-    articles: Article[];
+    orderArticles: OrderArticle[];
 }

@@ -16,5 +16,5 @@ public class OrderDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     private Long clientId;
-    private List<OrderArticleDto> articles;
+    private List<OrderArticleDto> orderArticles;
 }

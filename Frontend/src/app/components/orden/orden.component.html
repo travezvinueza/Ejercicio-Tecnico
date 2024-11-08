@@ -22,12 +22,12 @@
                 <td>{{ order.date }}</td>
                 <td>
                     <ul>
-
-                        <li *ngFor="let article of order.articles">
-                            {{ article.code }} - {{ article.name }} - {{ article.unitPrice }}
+                        <li *ngFor="let article of order.orderArticles">
+                            {{ article.articleName }} - {{ article.unitPrice | currency }} - Cantidad: {{ article.quantity }} - Total: {{ article.totalPrice | currency }}
                         </li>
                     </ul>
                 </td>
+                
                 <td class="text-center">
                     <button class="btn btn-primary btn-sm me-1" data-bs-toggle="modal"
                         data-bs-target="#editarModalOrden" (click)="order.id && editOrder(order.id)">
@@ -65,53 +65,77 @@
 </p-toast>
 
 
+<!-- Modal para crear la orden -->
 <div class="modal fade" id="agregarModalOrden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog draggable modal-dialog-centered">
+    <div class="modal-dialog modal-xl draggable modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-info text-center">
-                <h4 class="modal-title w-100 text-white" id="exampleModalLabel">Agregar Orden</h4>
+            <div class="modal-header bg-primary text-center">
+                <h4 class="modal-title w-100 text-white" id="exampleModalLabel">Crear Orden</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <form [formGroup]="orderDetail">
                     <input type="hidden" formControlName="id" class="form-control" id="id">
-
+                    <!-- Selección del cliente -->
                     <div class="mb-3">
                         <label class="form-label">Cliente</label>
-                        <select formControlName="clientId" class="form-select" id="clientId" required>
+                        <select formControlName="clientId" class="form-select" required>
                             <option value="" disabled selected>Seleccione un cliente</option>
-                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} - {{
-                                client.lastname }}</option>
+                            <option *ngFor="let client of clients" [ngValue]="client.id">{{ client.name }} {{ client.lastname }}</option>
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Artículo</label>
-                        <select formControlName="article" class="form-select" required>
-                            <option value="" disabled selected>Seleccione un artículo</option>
-                            <option *ngFor="let article of articles" [ngValue]="article">{{ article.name }}
-                            </option>
-                        </select>
+                    <!-- Selección de artículos -->
+                    <div class="mb-3 d-flex align-items-end">
+                        <!-- Selección de artículos -->
+                        <div class="flex-grow-1 me-2">
+                            <label class="form-label">Artículo</label>
+                            <select formControlName="article" class="form-select" required>
+                                <option value="" disabled selected>Seleccione un artículo</option>
+                                <option *ngFor="let article of articles" [value]="article.id">{{ article.name }} - {{ article.unitPrice | currency }}</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-warning" (click)="addToCart()">Añadir al carrito</button>
                     </div>
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" formControlName="cantidad" class="form-control" id="cantidad">
-                    <br>
-                    <p *ngFor="let list of orderArticles">{{ list.name }}</p>
-                    <button type="button" class="btn btn-success btn-sm" (click)="addArticle()"><i
-                            class="fa fa-save"></i>Agregar Articulo </button>
-                    <br>
+
+                    <!-- Carrito de compras -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="table-info">
+                                    <th>Nombre Artículo</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of cartItems">
+                                    <td>{{ item.articleName }}</td>
+                                    <td>{{ item.unitPrice | currency }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.totalPrice | currency }}</td>
+                                    <td>
+                                        <button (click)="decreaseQuantity(item)" class="btn btn-outline-danger btn-sm me-2"><i class="pi pi-minus"></i></button>
+                                        <button (click)="increaseQuantity(item)" class="btn btn-outline-success btn-sm me-2"><i class="pi pi-plus"></i></button>
+                                        <button (click)="removeItem(item)" class="btn btn-outline-danger btn-sm"><i class="pi pi-trash"></i> Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal"> <i
-                                class="fa fa-cancel"></i>Cancelar</button>
-                        <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal"
-                            (click)="addOrder()"><i class="fa fa-save"></i>Crear Orden </button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" (click)="addOrder()">Crear Orden</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <div class="modal fade" id="editarModalOrden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -123,7 +147,6 @@
             </div>
             <div class="modal-body">
                 <form [formGroup]="orderDetail">
-
                     <input type="hidden" formControlName="id" class="form-control" id="id">
 
                     <div class="mb-3">
@@ -135,24 +158,52 @@
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Artículo</label>
-                        <select formControlName="article" class="form-select custom-select" multiple required>
-                            <option *ngFor="let article of articles" [ngValue]="article.id">
-                                {{ article.name }}
-                            </option>
-                        </select>
+                    <!-- Selección de artículos -->
+                    <div class="mb-3 d-flex align-items-end">
+                        <div class="flex-grow-1 me-2">
+                            <label class="form-label">Artículo</label>
+                            <select formControlName="article" class="form-select" required>
+                                <option value="" disabled selected>Seleccione un artículo</option>
+                                <option *ngFor="let article of articles" [value]="article.id">{{ article.name }} - {{ article.unitPrice | currency }}</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-warning" (click)="addToCart()">Añadir al carrito</button>
                     </div>
 
-                    <br>
+                    <!-- Carrito de compras -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="table-info">
+                                    <th>Nombre Artículo</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of cartItems">
+                                    <td>{{ item.articleName }}</td>
+                                    <td>{{ item.unitPrice | currency }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.totalPrice | currency }}</td>
+                                    <td>
+                                        <button (click)="decreaseQuantity(item)" class="btn btn-outline-danger btn-sm me-2"><i class="pi pi-minus"></i></button>
+                                        <button (click)="increaseQuantity(item)" class="btn btn-outline-success btn-sm me-2"><i class="pi pi-plus"></i></button>
+                                        <button (click)="removeItem(item)" class="btn btn-outline-danger btn-sm"><i class="pi pi-trash"></i> Eliminar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal"><span
-                                class="fa fa-cancel"></span>Cerrar</button>
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal"
-                            (click)="updateOrders()"><span class="pi pi-save"></span> Actualizar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" (click)="updateOrders()">Actualizar</button>
                     </div>
                 </form>
             </div>
+            </div>
         </div>
     </div>
-</div>

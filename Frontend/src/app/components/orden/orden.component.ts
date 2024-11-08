@@ -1,23 +1,24 @@
-import { Article, OrderArticleDto } from './../../interfaces/article';
 import { ArticleService } from '../../services/article.service';
 import { ClientService } from '../../services/client.service';
 import { Order } from '../../interfaces/order';
 import { OrderService } from '../../services/order.service';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Client } from '../../interfaces/client';
 import { RouterModule } from '@angular/router';
+import { OrderArticle } from '../../interfaces/orderArticle';
+import { Article } from '../../interfaces/article';
 
 declare var $: any;
 
 @Component({
   selector: 'app-orden',
   standalone: true,
-  imports: [CommonModule, ToastModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ToastModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './orden.component.html',
   styleUrl: './orden.component.css'
 })
@@ -28,15 +29,17 @@ export class OrdenComponent implements OnInit {
   articles: Article[] = [];
   orderDetail !: FormGroup;
   orderToDelete: Order | undefined;
-  orderArticles: OrderArticleDto[] = [];
-  article: Article | undefined;
+
+  cartItems: OrderArticle[] = [];
+  selectedArticleId: number | undefined;
 
   constructor(
     private orderService: OrderService,
     private clientService: ClientService,
     private articleService: ArticleService,
     private formBuilder: FormBuilder,
-    public msgService: MessageService) { }
+    public msgService: MessageService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getAllOrders();
@@ -44,11 +47,11 @@ export class OrdenComponent implements OnInit {
     this.getAllArticles();
     this.orderDetail = this.formBuilder.group({
       id: [''],
-      code: [''],
-      date: [''],
+      // code: [''],
+      // date: [''],
       clientId: [''],
-      cantidad: [''],
-      article: [[]]
+      cantidad: [1],
+      article: [''],
     });
   }
 
@@ -62,7 +65,6 @@ export class OrdenComponent implements OnInit {
   getAllClients() {
     this.clientService.listarClientes().subscribe(
       (data) => {
-        debugger
         this.clients = data;
       }),
       (error: HttpErrorResponse) => {
@@ -73,7 +75,6 @@ export class OrdenComponent implements OnInit {
   getAllArticles() {
     this.articleService.listarArticulos().subscribe(
       (data) => {
-        debugger
         this.articles = data;
       }),
       (error: HttpErrorResponse) => {
@@ -84,7 +85,6 @@ export class OrdenComponent implements OnInit {
   getAllOrders() {
     this.orderService.listarOrdenes().subscribe(
       (data) => {
-        debugger
         this.orders = data;
       }),
       (error: HttpErrorResponse) => {
@@ -92,32 +92,76 @@ export class OrdenComponent implements OnInit {
       }
   }
 
-  addArticle() {
-    debugger
-    const clientId = this.orderDetail.value.clientId;
+  // Método para agregar al carrito
+  addToCart() {
+    console.log('Método addToCart llamado'); // Mensaje de depuración
+    console.log(this.articles); // Verifica si hay artículos disponibles
 
-    if (!clientId) {
-      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un cliente' });
-      return;
+    this.selectedArticleId = this.orderDetail.value.article; // Obtén el artículo seleccionado del formulario
+    console.log('ID del artículo seleccionado:', this.selectedArticleId); // Mensaje de depuración
+    const cantidad = this.orderDetail.value.cantidad; // Usa el valor de cantidad desde el formulario
+    console.log('Cantidad seleccionada:', cantidad); // Mensaje de depuración
+
+    if (this.selectedArticleId) {
+      // Busca el artículo usando Number() para evitar problemas de tipo
+      const selectedArticle = this.articles.find(article => article.id === Number(this.selectedArticleId));
+      console.log('Artículo encontrado:', selectedArticle); // Verifica si se encontró el artículo
+
+      if (selectedArticle) {
+        // Verifica si hay stock disponible
+        if (selectedArticle.stock >= cantidad) {
+          const existingItem = this.cartItems.find(item => item.articleId === selectedArticle.id);
+
+          if (existingItem) {
+            console.log('Artículo ya en el carrito, actualizando cantidad'); // Mensaje de depuración
+            existingItem.quantity += cantidad; // Actualizamos la cantidad
+            existingItem.totalPrice = existingItem.quantity * existingItem.unitPrice;
+          } else {
+            console.log('Agregando nuevo artículo al carrito'); // Mensaje de depuración
+            this.cartItems.push({
+              articleId: selectedArticle.id,
+              articleName: selectedArticle.name,
+              unitPrice: selectedArticle.unitPrice,
+              quantity: cantidad,
+              totalPrice: cantidad * selectedArticle.unitPrice
+            });
+          }
+          this.cdr.detectChanges();
+          console.log(this.cartItems); // Estado del carrito
+
+          // Actualizar stock después de agregar al carrito
+          selectedArticle.stock -= cantidad; // Decrementar el stock
+        } else {
+          this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Artículo en stock no disponible' });
+        }
+      } else {
+        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Artículo no encontrado' });
+      }
+
+      // Reiniciamos el formulario
+      this.orderDetail.patchValue({ article: '', cantidad: 1 }); // Reiniciamos los controles
+    } else {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Seleccione un artículo' });
     }
+  }
 
-    const selectedArticles = this.orderArticles;
+  increaseQuantity(item: OrderArticle) {
+    item.quantity++;
+    item.totalPrice = item.quantity * item.unitPrice;
+  }
 
-    if (!selectedArticles) {
-      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar al menos un articulo' });
-      return;
+  decreaseQuantity(item: OrderArticle) {
+    if (item.quantity > 1) {
+      item.quantity--;
+      item.totalPrice = item.quantity * item.unitPrice;
     }
+  }
 
-    const articleOrder: OrderArticleDto = {
-      id: this.orderDetail.value.article.id,
-      cantidad: this.orderDetail.value.cantidad,
-      name: this.orderDetail.value.article.name
-    }
-    this.orderArticles.push(articleOrder)
+  removeItem(item: OrderArticle) {
+    this.cartItems = this.cartItems.filter(cartItem => cartItem !== item);
   }
 
   addOrder() {
-    debugger
     const clientId = this.orderDetail.value.clientId;
 
     if (!clientId) {
@@ -125,83 +169,95 @@ export class OrdenComponent implements OnInit {
       return;
     }
 
-    const selectedArticles = this.orderArticles;
-
-    if (!selectedArticles) {
-      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar al menos un articulo' });
+    if (this.cartItems.length === 0) {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe agregar artículos' });
       return;
     }
 
     const nuevaOrden: Order = {
       id: 0,
-      clientId: clientId,
-      orderArticleDtos: selectedArticles,
-      articles: []
+      clientId: this.orderDetail.value.clientId,
+      orderArticles: this.cartItems, // Enlazamos los artículos seleccionados
     };
 
     this.orderService.crearOrden(nuevaOrden).subscribe({
       next: () => {
         this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Orden creada exitosamente" });
         this.orderDetail.reset();
+        this.cartItems = [];
         this.getAllOrders();
-        this.orderArticles = []
       },
       error: (error: HttpErrorResponse) => {
         this.msgService.add({ severity: 'error', summary: 'Error', detail: 'No hay suficientes artículos' });
+        console.error(error);
       }
     });
   }
 
-  updateOrders() {
-    const orderId = this.orderDetail.value.id;
-    const clientId = this.orderDetail.value.clientId;
-    const selectedArticles = this.orderDetail.value.articles;
+ updateOrders() {
+    const orderId = this.orderDetail.value.id; // ID de la orden a actualizar
+    const clientId = this.orderDetail.value.clientId; // ID del cliente
+    const selectedArticles = this.cartItems; // Artículos en el carrito
 
     if (!clientId) {
       this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un cliente' });
       return;
     }
 
-    if (!selectedArticles) {
-      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe seleccionar un artículo' });
+    if (selectedArticles.length === 0) {
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Debe agregar artículos' });
       return;
     }
 
-    const ordenActualizada: Order = {
+    // Crear el objeto de la orden actualizada
+    const updatedOrder: Order = {
       id: orderId,
       clientId: clientId,
-      articles: [],
-      orderArticleDtos: selectedArticles.map((id: number) => ({ id })),
+      orderArticles: selectedArticles // Artículos actualizados en la orden
     };
 
-    this.orderService.actualizarOrden(ordenActualizada).subscribe({
+    // Llamar al servicio para actualizar la orden
+    this.orderService.actualizarOrden(updatedOrder).subscribe({
       next: () => {
-        debugger
-        this.msgService.add({ severity: 'info', summary: "Éxito", detail: "Orden actualizada exitosamente" });
-        this.getAllOrders();
-        this.orderDetail.reset();
+        this.msgService.add({ severity: 'info', summary: 'Éxito', detail: 'Orden actualizada exitosamente' });
+        this.orderDetail.reset(); // Reiniciar el formulario
+        this.cartItems = []; // Limpiar el carrito
+        this.getAllOrders(); // Recargar todas las órdenes
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Error al actualizar la orden', error);
-        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al actualizar la orden' });
+        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar la orden' });
+        console.error('Error al actualizar la orden:', error);
       }
     });
-  }
+}
 
-  editOrder(id: number) {
-    this.orderService.obtenerOrdenPorId(id).subscribe({
-      next: (orden) => {
-        this.orderDetail.patchValue(orden);
+editOrder(id: number) {
+  this.orderService.obtenerOrdenPorId(id).subscribe({
+    next: (orden) => {
+      // Rellenar los detalles de la orden (cliente, etc.)
+      this.orderDetail.patchValue({
+        id: orden.id,
+        clientId: orden.clientId
+      });
 
-        const selectedArticles = orden.articles.map(a => a.id);
-        this.orderDetail.controls['articles'].setValue(selectedArticles);
-      },
-      error: (error) => {
-        console.error("Error al obtener la orden: ", error);
-        this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener la orden' });
-      }
-    });
-  }
+      // Rellenar el carrito con los artículos ya existentes en la orden
+      this.cartItems = orden.orderArticles.map(article => ({
+        articleId: article.articleId,
+        articleName: article.articleName,
+        unitPrice: article.unitPrice,
+        quantity: article.quantity,
+        totalPrice: article.totalPrice
+      }));
+
+      console.log("Carrito actualizado con los artículos de la orden", this.cartItems);
+    },
+    error: (error) => {
+      console.error("Error al obtener la orden: ", error);
+      this.msgService.add({ severity: 'error', summary: 'Error', detail: 'Error al obtener la orden' });
+    }
+  });
+}
+
 
   showConfirmation(orden: Order) {
     this.orderToDelete = orden;

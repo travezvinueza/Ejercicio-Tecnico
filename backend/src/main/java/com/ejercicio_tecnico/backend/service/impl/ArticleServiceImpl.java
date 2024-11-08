@@ -44,6 +44,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         article.setName(articleDto.getName());
         article.setUnitPrice(articleDto.getUnitPrice());
+        article.setStock(articleDto.getStock());
 
         Article articleActualizado = articleRepository.save(article);
         return modelMapper.map(articleActualizado, ArticleDto.class);

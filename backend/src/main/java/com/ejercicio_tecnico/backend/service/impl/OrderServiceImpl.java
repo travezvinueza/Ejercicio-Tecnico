@@ -1,5 +1,6 @@
 package com.ejercicio_tecnico.backend.service.impl;
 
+import com.ejercicio_tecnico.backend.dto.OrderArticleDto;
 import com.ejercicio_tecnico.backend.dto.OrderDto;
 import com.ejercicio_tecnico.backend.entity.Article;
 import com.ejercicio_tecnico.backend.entity.Client;
@@ -44,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         order.setClient(client);
 
         // Crear la lista para almacenar los detalles de los artículos de la orden
-        List<OrderArticle> orderArticles = orderDto.getArticles().stream().map(articleDto -> {
+        List<OrderArticle> orderArticles = orderDto.getOrderArticles().stream().map(articleDto -> {
             Article article = articleRepository.findById(articleDto.getArticleId())
                     .orElseThrow(() -> new ArticleNotFoundException("Artículo no encontrado con ID: " + articleDto.getArticleId()));
 
@@ -75,9 +76,11 @@ public class OrderServiceImpl implements OrderService {
     private String generateCodigoUnico() {
         return "ORDEN-" + UUID.randomUUID().toString().substring(0, 6);
     }
+    
 
     @Override
     public OrderDto updateOrder(OrderDto orderDto) {
+        // Buscar la orden existente
         Order orderExistente = orderRepository.findById(orderDto.getId())
                 .orElseThrow(() -> new OrderNotFoundException("Orden no encontrada con ID: " + orderDto.getId()));
 
@@ -87,22 +90,20 @@ public class OrderServiceImpl implements OrderService {
         // Asignar el cliente a la orden existente
         orderExistente.setClient(client);
 
-        // Asegúrate de que la lista sea mutable
-        List<OrderArticle> orderArticlesExistente = new ArrayList<>(orderExistente.getOrderArticles());
-
-        // Devolver al stock original los artículos antes de eliminarlos
-        for (OrderArticle orderArticle : orderArticlesExistente) {
+        // Devolver al stock original los artículos antes de cualquier modificación
+        for (OrderArticle orderArticle : orderExistente.getOrderArticles()) {
             Article article = orderArticle.getArticle();
             article.setStock(article.getStock() + orderArticle.getQuantity());
-            articleRepository.save(article);
+            articleRepository.save(article); // Ajustar el stock en base a los artículos existentes
         }
 
+        // Limpiar la lista de artículos de la orden y persistir la eliminación
         orderExistente.getOrderArticles().clear();
-        orderArticleRepository.deleteAll(orderArticlesExistente);  // Eliminar los registros anteriores en la base de datos
+        orderRepository.save(orderExistente); // Guardar para eliminar los artículos anteriores
 
-        // Crear una lista para los nuevos artículos
-        List<OrderArticle> nuevosOrderArticles = orderDto.getArticles().stream().map(articleDto -> {
-            // Buscar el artículo
+        // Crear y agregar nuevos artículos a la orden
+        List<OrderArticle> nuevosOrderArticles = new ArrayList<>();
+        for (OrderArticleDto articleDto : orderDto.getOrderArticles()) {
             Article article = articleRepository.findById(articleDto.getArticleId())
                     .orElseThrow(() -> new ArticleNotFoundException("Artículo no encontrado con ID: " + articleDto.getArticleId()));
 
@@ -111,11 +112,7 @@ public class OrderServiceImpl implements OrderService {
                         " no tiene suficiente stock. Disponible: " + article.getStock() + ", Solicitado: " + articleDto.getQuantity());
             }
 
-            // Ajustar el stock del artículo
-            article.setStock(article.getStock() - articleDto.getQuantity());
-            articleRepository.save(article);
-
-            // Crear y asignar el detalle del artículo en la orden
+            // Crear un nuevo detalle de artículo para la orden
             OrderArticle orderArticle = new OrderArticle();
             orderArticle.setOrder(orderExistente);
             orderArticle.setArticle(article);
@@ -123,14 +120,22 @@ public class OrderServiceImpl implements OrderService {
             orderArticle.setUnitPrice(article.getUnitPrice());
             orderArticle.setTotalPrice(article.getUnitPrice().multiply(BigDecimal.valueOf(articleDto.getQuantity())));
 
-            return orderArticle;
-        }).toList();
+            // Ajustar el stock del artículo
+            article.setStock(article.getStock() - articleDto.getQuantity());
+            articleRepository.save(article); // Guardar el ajuste del stock
+
+            // Agregar el nuevo artículo a la lista
+            nuevosOrderArticles.add(orderArticle);
+        }
 
         // Asignar los nuevos artículos a la orden
         orderExistente.getOrderArticles().addAll(nuevosOrderArticles);
+
+        // Guardar la orden actualizada
         Order ordenActualizada = orderRepository.save(orderExistente);
         return modelMapper.map(ordenActualizada, OrderDto.class);
     }
+
 
     @Override
     public List<OrderDto> listOrders() {
